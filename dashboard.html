@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% block title %}Dashboard{% endblock %}
+{% block body %}
+<div class="head"><div><h1>Dashboard</h1><p class="sub">Live figures from the SQLite database · today is {{ today }}</p></div>
+<div><a class="btn" href="{{ url_for('claim_new') }}">+ Report a claim</a> <a class="btn light" href="{{ url_for('customer_new') }}">+ New customer</a></div></div>
+<div class="kpis">
+  <div class="kpi"><b>{{ kpi.active }}</b><span>Active policies</span></div>
+  <div class="kpi"><b>{{ kpi.customers }}</b><span>Customers</span></div>
+  <div class="kpi"><b>{{ kpi.open_claims }}</b><span>Open claims</span></div>
+  <div class="kpi"><b>{{ kpi.overdue|money }}</b><span>Overdue premium (USD)</span></div>
+</div>
+<div class="grid2">
+<div>
+<h2>Overdue instalments</h2>
+<table><tr><th>Policy</th><th>Customer</th><th class="num">Inst.</th><th class="num">Outstanding</th><th>Oldest due</th></tr>
+{% for r in overdue %}<tr><td><a href="{{ url_for('policy_detail', pid=r.PolicyID) }}">{{ r.PolicyNumber }}</a></td><td>{{ r.FullName }}</td><td class="num">{{ r.Instalments }}</td><td class="num">{{ r.Outstanding|money }}</td><td>{{ r.Oldest }}</td></tr>
+{% else %}<tr><td colspan="5" class="empty">No overdue instalments.</td></tr>{% endfor %}</table>
+</div>
+<div>
+<h2>Open claims</h2>
+<table><tr><th>Claim</th><th>Policy</th><th>Status</th><th class="num">Days open</th></tr>
+{% for r in open_claims %}<tr><td><a href="{{ url_for('claim_detail', cid=r.ClaimID) }}">{{ r.ClaimReference }}</a></td><td>{{ r.PolicyNumber }}<br><small>{{ r.FullName }}</small></td><td><span class="tag {{ r.ClaimStatus }}">{{ r.ClaimStatus }}</span></td><td class="num">{{ r.DaysOpen }}</td></tr>
+{% else %}<tr><td colspan="4" class="empty">No open claims.</td></tr>{% endfor %}</table>
+</div>
+</div>
+{% endblock %}

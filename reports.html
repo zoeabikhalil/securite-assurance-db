@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}SQL reports{% endblock %}
+{% block body %}
+<h1>SQL reports</h1><p class="sub">The queries from 03_queries.sql, run live against the database.</p>
+<div class="layout">
+<div class="qlist">{% for x in qs %}<a href="{{ url_for('reports', q=loop.index) }}" class="{{ 'on' if loop.index==sel }}">{{ x.title }}</a>{% endfor %}</div>
+<div>
+<div class="card"><b>{{ cur.title }}</b><p style="margin:6px 0 0">{{ cur.question }}</p></div>
+<pre class="sql">{{ cur.sql }}</pre>
+<table><tr>{% for c in cols %}<th>{{ c }}</th>{% endfor %}</tr>
+{% for r in rows %}<tr>{% for v in r %}<td>{{ v if v is not none else 'NULL' }}</td>{% endfor %}</tr>{% else %}<tr><td class="empty" colspan="{{ cols|length }}">No rows.</td></tr>{% endfor %}</table>
+<p class="sub">{{ rows|length }} row{{ '' if rows|length==1 else 's' }}</p>
+</div></div>
+{% endblock %}

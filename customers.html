@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Customers{% endblock %}
+{% block body %}
+<div class="head"><div><h1>Customers</h1><p class="sub">Search by name, customer number or phone.</p></div><a class="btn" href="{{ url_for('customer_new') }}">+ New customer</a></div>
+<form class="inline" method="get"><input name="q" value="{{ term }}" placeholder="e.g. Itani, CU000105, +961 3" size="32"><button class="btn">Search</button>{% if term %} <a href="{{ url_for('customers') }}">Clear</a>{% endif %}</form>
+<p class="sub" style="margin-top:12px">{{ rows|length }} customer{{ '' if rows|length==1 else 's' }}</p>
+<table><tr><th>No.</th><th>Name</th><th>City (district)</th><th>Phone numbers</th><th>Email</th><th class="num">Policies</th></tr>
+{% for r in rows %}<tr><td>{{ r.CustomerNumber }}</td><td><a href="{{ url_for('customer_detail', cid=r.CustomerID) }}">{{ r.FullName }}</a></td><td>{{ r.CityName }} ({{ r.District }})</td><td>{{ (r.Phones or '').replace(',', ', ') }}</td><td>{{ r.Email or '–' }}</td><td class="num">{{ r.Policies }}</td></tr>
+{% else %}<tr><td colspan="6" class="empty">No customer matches.</td></tr>{% endfor %}</table>
+{% endblock %}

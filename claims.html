@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}Claims{% endblock %}
+{% block body %}
+<div class="head"><div><h1>Claims</h1><p class="sub">Processing days are derived: reported date to closed date, or to today for open claims.</p></div><a class="btn" href="{{ url_for('claim_new') }}">+ Report a claim</a></div>
+<form class="inline" method="get"><select name="status" onchange="this.form.submit()"><option value="">All statuses</option>
+{% for s in ['Reported','Under Review','Approved','Rejected','Closed'] %}<option {{ 'selected' if s==status }}>{{ s }}</option>{% endfor %}</select></form>
+<p class="sub" style="margin-top:12px">{{ rows|length }} claim{{ '' if rows|length==1 else 's' }}</p>
+<table><tr><th>Claim</th><th>Policy</th><th>Customer</th><th>Incident</th><th>Description</th><th class="num">Claimed</th><th>Status</th><th class="num">Days</th></tr>
+{% for r in rows %}<tr><td><a href="{{ url_for('claim_detail', cid=r.ClaimID) }}">{{ r.ClaimReference }}</a></td><td>{{ r.PolicyNumber }}</td><td>{{ r.FullName }}</td><td>{{ r.IncidentDate }}</td><td class="desc">{{ r.Description }}</td><td class="num">{{ r.ClaimedAmount|money }}</td><td><span class="tag {{ r.ClaimStatus }}">{{ r.ClaimStatus }}</span></td><td class="num">{{ r.ProcessingDays }}</td></tr>
+{% else %}<tr><td colspan="8" class="empty">No claims.</td></tr>{% endfor %}</table>
+{% endblock %}

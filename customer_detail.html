@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}{{ c.FullName }}{% endblock %}
+{% block body %}
+<h1>{{ c.FullName }}</h1><p class="sub">{{ c.CustomerNumber }}</p>
+<div class="card"><dl>
+<dt>Date of birth</dt><dd>{{ c.DateOfBirth }} (age {{ c.Age }}, derived)</dd>
+<dt>Address</dt><dd>{{ c.Street }}, {{ c.CityName }} – {{ c.District }} district</dd>
+<dt>Email</dt><dd>{{ c.Email or '–' }}</dd>
+<dt>Phone numbers</dt><dd>{% for ph in phones %}{{ ph.PhoneNumber }}{{ ', ' if not loop.last }}{% endfor %}</dd></dl></div>
+<h2>Policies</h2>
+<table><tr><th>Policy</th><th>Vehicle</th><th>Plate</th><th>Term</th><th class="num">Premium</th><th>Status</th></tr>
+{% for p in pols %}<tr><td><a href="{{ url_for('policy_detail', pid=p.PolicyID) }}">{{ p.PolicyNumber }}</a></td><td>{{ p.Make }} {{ p.ModelName }}</td><td>{{ p.PlateNumber }}</td><td>{{ p.StartDate }} → {{ p.EndDate }}</td><td class="num">{{ p.PremiumAmount|money }}</td><td><span class="tag {{ p.Status }}">{{ p.Status }}</span></td></tr>
+{% else %}<tr><td colspan="6" class="empty">No policies yet.</td></tr>{% endfor %}</table>
+{% endblock %}

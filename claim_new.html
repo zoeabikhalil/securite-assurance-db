@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block title %}Report a claim{% endblock %}
+{% block body %}
+<h1>Report a claim</h1><p class="sub">The database rejects a claim whose incident date falls outside the policy term, or whose reported date is before the incident.</p>
+<form method="post" class="card"><div class="fields">
+<label class="full">Policy *<select name="policy" required>
+{% set pre = (form.policy or request.args.get('policy') or '')|string %}
+{% for p in pols %}<option value="{{ p.PolicyID }}" {{ 'selected' if pre==p.PolicyID|string }}>{{ p.PolicyNumber }} · {{ p.FullName }} · {{ p.PlateNumber }} ({{ p.StartDate }} → {{ p.EndDate }})</option>{% endfor %}</select></label>
+<label>Incident date *<input type="date" name="incident" required value="{{ form.incident or today }}"></label>
+<label>Reported date *<input type="date" name="reported" required value="{{ form.reported or today }}"></label>
+<label class="full">Description *<textarea name="description" required maxlength="250">{{ form.description or '' }}</textarea></label>
+<label>Claimed amount (USD)<input name="amount" type="number" step="0.01" min="0.01" value="{{ form.amount or '' }}"><span>Optional until a quote is available</span></label>
+<div class="full"><b>Damaged parts *</b><div class="checks" style="margin-top:6px">
+{% set chosen = form.getlist('parts') if form else [] %}
+{% for p in parts %}<label><input type="checkbox" name="parts" value="{{ p }}" {{ 'checked' if p in chosen }}> {{ p }}</label>{% endfor %}</div></div>
+<div class="full"><button class="btn">Register claim</button> <a href="{{ url_for('claims') }}">Cancel</a></div>
+</div></form>
+{% endblock %}

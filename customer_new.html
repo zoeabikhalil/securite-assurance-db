@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}New customer{% endblock %}
+{% block body %}
+<h1>New customer</h1><p class="sub">The customer number is generated automatically. Fields marked * are required by the database.</p>
+<form method="post" class="card"><div class="fields">
+<label>Full name *<input name="full_name" required maxlength="60" value="{{ form.full_name or '' }}"></label>
+<label>Date of birth *<input type="date" name="dob" required value="{{ form.dob or '' }}"><span>Must be between 1920 and 2008</span></label>
+<label>Street *<input name="street" required maxlength="80" value="{{ form.street or '' }}"></label>
+<label>City *<select name="city" required>{% for c in cities %}<option value="{{ c.CityName }}" {{ 'selected' if form.city==c.CityName }}>{{ c.CityName }} ({{ c.District }})</option>{% endfor %}</select></label>
+<label>Email<input name="email" maxlength="80" value="{{ form.email or '' }}"><span>Optional</span></label>
+<label>Phone numbers *<input name="phones" value="{{ form.phones or '' }}" placeholder="+961 3 123 456, +961 70 987 654"><span>Separate several numbers with commas</span></label>
+<div class="full"><button class="btn">Save customer</button> <a href="{{ url_for('customers') }}">Cancel</a></div>
+</div></form>
+{% endblock %}

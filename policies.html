@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}Policies{% endblock %}
+{% block body %}
+<div class="head"><div><h1>Policies</h1><p class="sub">Search by policy number, customer name or plate number.</p></div></div>
+<form class="inline" method="get">
+  <input name="q" value="{{ term }}" placeholder="e.g. MTR-2026, Haddad, B 4…" size="32">
+  <select name="status"><option value="">All statuses</option>
+    {% for s in ['Active','Expired','Cancelled'] %}<option {{ 'selected' if s==status }}>{{ s }}</option>{% endfor %}</select>
+  <button class="btn">Search</button> {% if term or status %}<a href="{{ url_for('policies') }}">Clear</a>{% endif %}
+</form>
+<p class="sub" style="margin-top:12px">{{ rows|length }} polic{{ 'y' if rows|length==1 else 'ies' }}</p>
+<table><tr><th>Policy</th><th>Customer</th><th>Vehicle</th><th>Plate</th><th>Term</th><th class="num">Premium</th><th>Status</th></tr>
+{% for r in rows %}<tr><td><a href="{{ url_for('policy_detail', pid=r.PolicyID) }}">{{ r.PolicyNumber }}</a></td><td>{{ r.FullName }}</td><td>{{ r.Make }} {{ r.ModelName }}</td><td>{{ r.PlateNumber }}</td><td>{{ r.StartDate }} → {{ r.EndDate }}</td><td class="num">{{ r.PremiumAmount|money }} {{ r.Currency }}</td><td><span class="tag {{ r.Status }}">{{ r.Status }}</span></td></tr>
+{% else %}<tr><td colspan="7" class="empty">No policy matches.</td></tr>{% endfor %}</table>
+{% endblock %}

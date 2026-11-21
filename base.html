@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Motor Policy & Claims{% endblock %} · Sécurité Assurance DB</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="top">
+  <div class="wrap bar">
+    <a class="brand" href="{{ url_for('dashboard') }}">
+      <span class="mark">SA</span>
+      <span><strong>Motor Policy &amp; Claims</strong><small>Sécurité Assurance · INDE 513 project database</small></span>
+    </a>
+    <nav>
+      {% set ep = request.endpoint or '' %}
+      <a href="{{ url_for('dashboard') }}" class="{{ 'on' if ep == 'dashboard' }}">Dashboard</a>
+      <a href="{{ url_for('policies') }}" class="{{ 'on' if ep.startswith('polic') }}">Policies</a>
+      <a href="{{ url_for('customers') }}" class="{{ 'on' if ep.startswith('customer') }}">Customers</a>
+      <a href="{{ url_for('claims') }}" class="{{ 'on' if ep.startswith('claim') }}">Claims</a>
+      <a href="{{ url_for('reports') }}" class="{{ 'on' if ep == 'reports' }}">SQL reports</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% for cat, m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}
+  {% endwith %}
+  {% block body %}{% endblock %}
+</main>
+<footer class="wrap foot">INDE 513 Information Systems · Fall 2026 · Fictional sample data · Flask + SQLite</footer>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% block title %}{{ p.PolicyNumber }}{% endblock %}
+{% block body %}
+<div class="head"><div><h1>{{ p.PolicyNumber }} <span class="tag {{ p.Status }}">{{ p.Status }}</span></h1>
+<p class="sub">{{ p.StartDate }} → {{ p.EndDate }} · {{ p.DurationDays }} days · premium {{ p.PremiumAmount|money }} {{ p.Currency }}</p></div>
+<a class="btn light" href="{{ url_for('claim_new', policy=p.PolicyID) }}">+ Report a claim on this policy</a></div>
+<div class="grid2">
+ <div class="card"><h2 style="margin-top:0">Policyholder</h2><dl>
+  <dt>Customer</dt><dd><a href="{{ url_for('customer_detail', cid=p.CustomerID) }}">{{ p.FullName }}</a> ({{ p.CustomerNumber }})</dd>
+  <dt>Age</dt><dd>{{ p.Age }} <small class="sub">derived</small></dd></dl></div>
+ <div class="card"><h2 style="margin-top:0">Vehicle</h2><dl>
+  <dt>Make / model</dt><dd>{{ p.Make }} {{ p.ModelName }} ({{ p.ManufactureYear }})</dd>
+  <dt>Plate</dt><dd>{{ p.PlateNumber }}</dd>
+  <dt>Vehicle age</dt><dd>{{ p.VehicleAge }} years <small class="sub">derived</small></dd></dl></div>
+</div>
+<h2>Coverage options ({{ covers|length }} of max 4)</h2>
+<table><tr><th>Code</th><th>Cover</th><th class="num">Limit</th><th class="num">Deductible</th><th class="num">Cover premium</th></tr>
+{% for c in covers %}<tr><td>{{ c.OptionCode }}</td><td class="desc">{{ c.OptionName }}</td><td class="num">{{ c.SelectedLimit|money }}</td><td class="num">{{ c.Deductible|money }}</td><td class="num">{{ c.CoverPremium|money }}</td></tr>{% endfor %}</table>
+<h2>Instalments</h2>
+<table><tr><th>#</th><th>Due</th><th class="num">Due amount</th><th class="num">Paid</th><th class="num">Balance</th><th>Paid on</th><th>Status</th><th>Record payment</th></tr>
+{% for x in pays %}<tr><td>{{ x.InstallmentNo }}</td><td>{{ x.DueDate }}</td><td class="num">{{ x.AmountDue|money }}</td><td class="num">{{ x.AmountPaid|money }}</td><td class="num">{{ x.Balance|money }}</td><td>{{ x.PaidDate or '–' }}</td><td><span class="tag {{ x.PaymentStatus }}">{{ x.PaymentStatus }}</span></td>
+<td>{% if x.PaymentStatus in ['Pending','Partial'] %}<form class="inline" method="post" action="{{ url_for('record_payment', pay_id=x.PaymentID) }}"><input name="amount" size="7" value="{{ '%.2f'|format(x.Balance) }}"><button class="btn sm">Pay</button></form>{% endif %}</td></tr>{% endfor %}</table>
+<h2>Claims</h2>
+<table><tr><th>Claim</th><th>Incident</th><th>Description</th><th class="num">Claimed</th><th>Status</th><th class="num">Processing days</th></tr>
+{% for c in claims %}<tr><td><a href="{{ url_for('claim_detail', cid=c.ClaimID) }}">{{ c.ClaimReference }}</a></td><td>{{ c.IncidentDate }}</td><td class="desc">{{ c.Description }}</td><td class="num">{{ c.ClaimedAmount|money }}</td><td><span class="tag {{ c.ClaimStatus }}">{{ c.ClaimStatus }}</span></td><td class="num">{{ c.ProcessingDays }}</td></tr>
+{% else %}<tr><td colspan="6" class="empty">No claims on this policy.</td></tr>{% endfor %}</table>
+{% endblock %}

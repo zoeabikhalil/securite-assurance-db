@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block title %}{{ cl.ClaimReference }}{% endblock %}
+{% block body %}
+<h1>{{ cl.ClaimReference }} <span class="tag {{ cl.ClaimStatus }}">{{ cl.ClaimStatus }}</span></h1>
+<p class="sub">Policy <a href="{{ url_for('policy_detail', pid=cl.PolicyID) }}">{{ cl.PolicyNumber }}</a> · {{ cl.FullName }} · {{ cl.PlateNumber }}</p>
+<div class="grid2">
+<div class="card"><h2 style="margin-top:0">Claim</h2><dl>
+<dt>Incident date</dt><dd>{{ cl.IncidentDate }}</dd><dt>Reported</dt><dd>{{ cl.ReportedDate }}</dd>
+<dt>Closed</dt><dd>{{ cl.ClosedDate or '–' }}</dd><dt>Processing days</dt><dd>{{ cl.ProcessingDays }} <small class="sub">derived</small></dd>
+<dt>Claimed amount</dt><dd>{{ cl.ClaimedAmount|money }}</dd><dt>Description</dt><dd>{{ cl.Description }}</dd>
+<dt>Damaged parts</dt><dd>{% for p in parts %}<span class="tag">{{ p.PartName }}</span> {% endfor %}</dd></dl></div>
+<div class="card"><h2 style="margin-top:0">Assessment</h2>
+{% if asm %}<dl><dt>Date</dt><dd>{{ asm.AssessmentDate }}</dd><dt>Estimated loss</dt><dd>{{ asm.EstimatedLoss|money }}</dd>
+<dt>Decision</dt><dd><span class="tag {{ asm.Decision }}">{{ asm.Decision }}</span></dd><dt>Approved amount</dt><dd>{{ asm.ApprovedAmount|money }}</dd>
+<dt>Remarks</dt><dd>{{ asm.Remarks or '–' }}</dd></dl>{% else %}<p class="empty">Not assessed yet (HAS ASSESSMENT is optional for a claim).</p>{% endif %}</div>
+</div>
+<h2>Documents <small class="sub">(weak entity: ClaimID + DocumentNo)</small></h2>
+<table><tr><th>No.</th><th>Type</th><th>File</th><th>Received</th><th>Verification</th></tr>
+{% for d in docs %}<tr><td>{{ d.DocumentNo }}</td><td>{{ d.DocumentType }}</td><td>{{ d.FileName }}</td><td>{{ d.ReceivedDate }}</td><td><span class="tag {{ d.VerificationStatus }}">{{ d.VerificationStatus }}</span></td></tr>
+{% else %}<tr><td colspan="5" class="empty">No documents received yet.</td></tr>{% endfor %}</table>
+{% endblock %}
